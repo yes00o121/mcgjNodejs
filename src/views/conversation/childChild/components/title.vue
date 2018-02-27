@@ -73,7 +73,7 @@ export default {
                       }
                   }else{
                       throw "查询收藏失败"
-                  }
+                  } 
               },
               error : ()=>{
                   throw "查询收藏失败"
