@@ -1,7 +1,9 @@
 //帖子的标题组件
 <template>
 <div class="conversation-title">
-    {{datas.title}}
+    <div class="conversation-child-child-width">
+      {{datas.title}}
+    </div>
     <!-- 楼主菜单 -->
     <div v-if="isFollr" class="conversation-child-title-float-right">
       <el-button size="mini">删贴</el-button>
@@ -157,5 +159,12 @@ export default {
 .conversation-child-title-float-right{
   float:right;
   margin-left:10px;
+}
+.conversation-child-child-width{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 70%;
+    display: inline-block;
 }
 </style>
