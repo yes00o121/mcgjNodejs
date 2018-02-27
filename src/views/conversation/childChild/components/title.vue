@@ -1,4 +1,4 @@
-//帖子的标题组件..........................................文件提交测试啊啊啊啊啊 
+//帖子的标题组件..........................................文件提交测试啊啊啊啊啊
 <template>
 <div class="conversation-title">
     <div class="conversation-child-child-width">
