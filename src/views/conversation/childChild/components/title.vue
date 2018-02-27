@@ -1,4 +1,4 @@
-//帖子的标题组件
+//帖子的标题组件..........................................文件提交测试啊啊啊啊啊
 <template>
 <div class="conversation-title">
     <div class="conversation-child-child-width">
@@ -73,7 +73,7 @@ export default {
                       }
                   }else{
                       throw "查询收藏失败"
-                  } 
+                  }
               },
               error : ()=>{
                   throw "查询收藏失败"
