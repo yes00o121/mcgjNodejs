@@ -29,6 +29,7 @@
         label="点击">
       </el-table-column>
     </el-table>
+    <page ref = "page" @getPage = "getPage"></page>
   </div>
   <div v-else="isPost">
     没有创建的帖子数据
@@ -37,19 +38,29 @@
 </template>
 <script>
 import baseConfig from '../../../../config/baseConfig'
+import page from '../../components/page'//分页组件
 export default {
     data(){
         return {
             isPost : true,//默认用户没有创建过贴子
             datas : [],
-            url : baseConfig.localhost + '/conversationChild/selectUserPublishConversationChild'
+            url : baseConfig.localhost + '/conversationChild/selectUserPublishConversationChild',
+            start : 1,//默认开始页
+            limit : 10,//单页显示数量
         }
     },
     mounted(){
       this.init();
     },
+    components : {page},//组件
     methods:{
         init(){//初始化方法
+            //设置单页显示数据量
+            this.$refs.page.size = this.limit;
+            this.selectUserPublishConversationChild();
+        },
+        getPage(val){//用户切换分页时调用
+            this.start = val;
             this.selectUserPublishConversationChild();
         },
         selectUserPublishConversationChild(){//查询用户所发表的所有帖子数据
@@ -57,17 +68,21 @@ export default {
                 url : this.url,
                 data : {
                     userId : this.getUser().id,
-                    token : this.getToken()
+                    token : this.getToken(),
+                    start : this.start,
+                    limit : this.limit
                 },
                 success : (result)=>{
                     if(result.success){
                         //时间进行转换
-                        for(let i=0;i<result.result.length;i++){
-                            let date = new Date(result.result[i].createDate);
-                            result.result[i].createDate = date.getYear()+1900 +"-"+(date.getMonth()+1) + "-" + date.getDate()
-                            //result.result[i].createDate = this.handlerDate(result.result[i].createDate)
+                        for(let i=0;i<result.result.conversationChilds.length;i++){
+                            let date = new Date(result.result.conversationChilds[i].createDate);
+                            result.result.conversationChilds[i].createDate = date.getYear()+1900 +"-"+(date.getMonth()+1) + "-" + date.getDate()
+                            //result.result.conversationChilds[i].createDate = this.handlerDate(result.result.conversationChilds[i].createDate)
                         }
-                        this.datas = result.result;
+                        this.datas = result.result.conversationChilds;//数据赋值
+                        //设置总页数
+                        this.$refs.page.total = result.result.total;
                     }else{
                         this.$alert(result.message,'提示')
                     }

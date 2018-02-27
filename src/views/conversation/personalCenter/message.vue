@@ -19,27 +19,42 @@
                   <a href="#" style="color:#000;text-decoration:none;">{{data.conversationName}}</a>
               </div>
           </div>
+          <msgPage ref = "msgPage" @getPage = "getPage"></msgPage>
       </div>
   </div>
 </template>
 <script>
 import baseConfig from '../../../../config/baseConfig'
+import msgPage from '../../components/page'//引入分页工具
 export default {
     data(){
         return {
            url : baseConfig.localhost+'/conversationChildChild/selectConversationChildChildReplyByUserId',//查询该用户没有处理的回复数据
            datas : [],
+           start : 1,//开始页数
+           limit : 10,//单页数量
         }
     },
     mounted(){
+      this.initPage();//设置当前分页显示的页数
       //获取当前用户未查看的回复消息数据
       this.selectReplys();
       //this.scroll();//监听浏览器,暂时不加
     },
+    components:{msgPage},//组件
     updated(){
 
     },
+    watch:{
+      start(){//用户切换页数
+        //刷新页面数据
+        this.selectReplys();
+      }
+    },
     methods : {
+        initPage(){//初始化页数
+          this.$refs.msgPage.size = this.limit;//单页显示
+        },
         scroll(){//浏览器变化监听
             document.body.onscroll = function(){
                 console.log(document.body.scrollTop)
@@ -51,16 +66,23 @@ export default {
             })
 
         },
+        getPage(val){//获取分页数据
+            //修改开始页的索引
+            this.start = val;
+        },
         selectReplys(){
             $.ajax({
               url : this.url,
               data:{
                 token : this.getToken(),
-                userId : this.getUser().id
+                userId : this.getUser().id,
+                start : this.start,
+                limit : this.limit
               },
               success : (result)=>{
                   if(result.success){
-                      this.datas = result.result;
+                      this.datas = result.result.conversationChildChilds;
+                      this.$refs.msgPage.total = result.result.total;//总数
                   }else{
 
                   }

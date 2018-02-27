@@ -40,7 +40,6 @@ export default {
     },
     methods : {
       init(){//初始化方法
-      console.log('!!!')
         //判断用户是否登录，如果登录查询用户关注贴吧的状态
         if(this.getUser().id != null){
             this.selectFollow(this.getUser().id);
@@ -56,12 +55,9 @@ export default {
                   conversationId : this.$route.query.conversationId//贴吧id,同步加载导致无法及时的获取datas中的id，所以只能通过参数来获取
               },
               success : (result)=>{
-                console.log("!!")
-                console.log(result)
                   if(result.success){
                       //查询之后
                       if(result.result != null && result.result.length > 0){
-                        console.log("关注。。")
                         this.follow = true;//用户关注了该贴吧
                       }
                   }else{
@@ -81,8 +77,9 @@ export default {
           $.ajax({
             url : this.cancelFollowUrl,
             data : {
-                id : this.$route.query.conversationId,
-                token : this.getToken()
+                conversationId : this.$route.query.conversationId,
+                token : this.getToken(),
+                userId : this.getUser().id
             },
             success : (result)=>{
                 if(result.success){
@@ -106,8 +103,6 @@ export default {
       if(!this.isLogin()){//判断用户是否登录
           return;//没有登录
       }
-      console.log(this.datas)
-      console.log(this.getUser())
         $.ajax({
           url : this.addFollowUrl,
           data : {
