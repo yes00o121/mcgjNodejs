@@ -12,7 +12,9 @@
           <router-link :to="{path : '/conversationChild'}" style="text-decoration: none;margin-left: 24%;font-size: 22px;color:black">
             {{user.userName}}
           </router-link>
-          <div style="margin-left:24%;font-size:14px;margin-top:5px;">人人都是演员</div>
+          <div style="margin-left:24%;font-size:12px;color:#797C80;margin-top:5px;">
+              <div>发帖&nbsp;:&nbsp;{{publishNumber}}</div>
+          </div>
         </div>
     </div>
     <div class="personal-child-header-bottom">
@@ -20,7 +22,7 @@
     </div>
   </div>
   <div>
-        <personalMenu></personalMenu>
+        <personalMenu @publish = "publish" ></personalMenu>
   </div>
   <div class="personal-center">
 
@@ -34,7 +36,8 @@ export default {
   data(){
     return {
         imgUrl : baseConfig.localhost+baseConfig.imgUrl+'?imgId=',//图片url
-        user : this.getUser()
+        user : this.getUser(),
+        publishNumber : 0//发贴数量
     }
   },
   mounted:function(){
@@ -43,9 +46,14 @@ export default {
   components : {personalMenu},
   methods : {
     init(){
-
+        window.bb = this.$refs;
+    },
+    publish(value){
+        console.log('发贴方法被调用。。。。。'+value)
+        this.publishNumber = value;
     }
   }
+
 }
 </script>
 <style>

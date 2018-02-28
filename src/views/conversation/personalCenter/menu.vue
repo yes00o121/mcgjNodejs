@@ -8,7 +8,7 @@
         <personalMessage></personalMessage>
       </el-tab-pane>
       <el-tab-pane label="我的贴子" name="post">
-        <personalPost></personalPost>
+        <personalPost @publish = "publish"></personalPost>
       </el-tab-pane>
       <el-tab-pane label="收藏" name="collection">
         <personalCollection></personalCollection>
@@ -35,6 +35,9 @@ export default {
     methods : {
       handleClick(){
 
+      },
+      publish(value){
+          this.$emit('publish',value)
       }
     }
 }

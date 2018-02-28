@@ -1,11 +1,13 @@
 <template>
-  <div>
+  <div class="home-core" id= "homeCore">
   <el-container>
   <topHome></topHome>
-  <utilHome></utilHome>
-  <el-main style="padding:0px;width:60%;margin:0 auto">
-      <router-view></router-view>
-  </el-main>
+  <!--<utilHome></utilHome>-->
+  <div style="100%" id= "main">
+    <el-main style="padding:0px;width:60%;margin:0 auto;">
+        <router-view></router-view>
+    </el-main>
+  </div>
   <el-footer style="display:none">
     <bottomHome></bottomHome>
   </el-footer>
@@ -24,13 +26,20 @@ export default {
   data(){
     return {ccc:10}
   },
-  components : {topHome,menuHome,bottomHome,bodyHome,utilHome}
+  components : {topHome,menuHome,bottomHome,bodyHome,utilHome},
+  mounted(){
+      
+  }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.home-core{
+  margin-left:-8px;
+  margin-right:-8px;
 
+}
 h1, h2 {
   font-weight: normal;
 }

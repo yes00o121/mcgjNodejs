@@ -37,14 +37,13 @@
 </div>
 </template>
 <script>
-import baseConfig from '../../../../config/baseConfig'
 import page from '../../components/page'//分页组件
 export default {
     data(){
         return {
             isPost : true,//默认用户没有创建过贴子
             datas : [],
-            url : baseConfig.localhost + '/conversationChild/selectUserPublishConversationChild',
+            url : this.baseConfig.localhost + '/conversationChild/selectUserPublishConversationChild',
             start : 1,//默认开始页
             limit : 10,//单页显示数量
         }
@@ -83,6 +82,8 @@ export default {
                         this.datas = result.result.conversationChilds;//数据赋值
                         //设置总页数
                         this.$refs.page.total = result.result.total;
+                        //设置发贴数量
+                        this.setPublishNumber();
                     }else{
                         this.$alert(result.message,'提示')
                     }
@@ -91,6 +92,9 @@ export default {
                   throw "查询失败"
                 }
             })
+        },
+        setPublishNumber(){//设置发贴的数量
+            this.$emit('publish',this.datas.length)
         }
     }
 }

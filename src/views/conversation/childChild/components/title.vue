@@ -164,7 +164,7 @@ export default {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    width: 70%;
+    width: 65%;
     display: inline-block;
 }
 </style>

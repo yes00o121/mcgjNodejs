@@ -3,9 +3,13 @@ import App from './App.vue'
 import router from './router'
 import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import baseConfig from '../config/baseConfig'//配置
 Vue.use(Element)
 Vue.use(router);
+Vue.prototype.baseConfig = baseConfig;//设置全局配置文件
 router.beforeEach((to,form,next)=>{//路由拦截
+  //跳转页面前清空背景图片
+  $('#main').css('background-image','')
   if(to.name == null){//如果页面不存在跳转至错误页面
     router.push({
         name : 'error'

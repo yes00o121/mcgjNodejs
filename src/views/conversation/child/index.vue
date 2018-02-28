@@ -3,33 +3,40 @@
   <div>
       <div class="conversation-core">
           <childHeader ref="childHeader" :datas.sync = "datas"></childHeader>
-          <!-- 楼层 -->
-          <div v-for="(data,index) in floor.datas" class="conversation-floor" v-loading="loading">
-              <div class="conversation-div-photo">
-                  <div v-if="data.isManage" class="louzhubiaoshi"></div>
-                  <div style="padding-top:20px;">
-                    <el-tooltip content="回复" placement="top">
-                      <el-button size="mini">{{data.replyNumber}}</el-button>
-                    </el-tooltip>
-                    <p style="margin-top:10px;">{{data.userName}}</p>
+          <div style="display: -webkit-box;">
+            <div class="conversation-child-center-left">
+              <!-- 楼层 -->
+              <div v-for="(data,index) in floor.datas" class="conversation-floor" v-loading="loading">
+                  <div class="conversation-div-photo">
+                      <div v-if="data.isManage" class="louzhubiaoshi"></div>
+                      <div style="padding-top:20px;">
+                        <el-tooltip content="回复" placement="top">
+                          <el-button size="mini">{{data.replyNumber}}</el-button>
+                        </el-tooltip>
+                        <p style="margin-top:10px;">{{data.userName}}</p>
+                      </div>
+                  </div>
+                  <div class="conversation-create-user">{{data.createUserName}}</div>
+                  <div  class="conversation-last-user">
+                      <div>{{data.lastUserName}}</div>
+                  </div>
+                  <div  class="conversation-last-user" style="padding-right:3%;">{{handlerDate(data.lastDate)}}</div>
+                  <div class="conversation-div-content">
+                    <div class="conversation-size">
+                        <router-link :to="{path:'/conversationChildChild',query : {id:data.id}}">
+                            {{data.title}}
+                        </router-link>
+                    </div>
+                    <div v-bind:id="'post_content_'+data.id" class="conversation-child-content">
+                        <!-- 数据含标签动态追加 -->
+                    </div>
+                    <div v-bind:id="'post_img_'+data.id"></div>
                   </div>
               </div>
-              <div class="conversation-create-user">{{data.createUserName}}</div>
-              <div  class="conversation-last-user">
-                  <div>{{data.lastUserName}}</div>
-              </div>
-              <div  class="conversation-last-user" style="padding-right:3%;">{{handlerDate(data.lastDate)}}</div>
-              <div class="conversation-div-content">
-                <div class="conversation-size">
-                    <router-link :to="{path:'/conversationChildChild',query : {id:data.id}}">
-                        {{data.title}}
-                    </router-link>
-                </div>
-                <div v-bind:id="'post_content_'+data.id" class="conversation-child-content">
-                    <!-- 数据含标签动态追加 -->
-                </div>
-                <div v-bind:id="'post_img_'+data.id"></div>
-              </div>
+            </div>
+            <div class="conversation-child-center-right">
+              <centerRight :datas= "datas" ref="centerRight"></centerRight>
+            </div>
           </div>
           <page ref="page" @getPage= "getPage"></page>
           <div class="conversation-child--content-title">
@@ -42,19 +49,21 @@
   </div>
 </template>
 <script>
-import baseConfig from '../../../../config/baseConfig'//配置
 import replyPanel from '../../components/replyPanel'//回复面板组件
 import login from '../../components/login'//登录组件
-import page from '../../components/page'
+import page from '../../components/page'//分页组件
 import wangEditor from '../../components/wangEditor'
 import childHeader from './components/header'//头部面板
+import centerRight from './components/centerRight'//主面板右侧信息
 export default {
     data(){
       return {
-          url : baseConfig.localhost+'/conversation/selectConversationById',//查询当前帖子的标题头像等内容
-          floorUrl : baseConfig.localhost+'/conversationChild/selectConversationChildByConversationId',//当前贴吧的帖子(楼层)数据
-          publishUrl : baseConfig.localhost+'/conversationChild/addConversationChild',//发布帖子的方法
+          url : this.baseConfig.localhost+'/conversation/selectConversationById',//查询当前帖子的标题头像等内容
+          floorUrl : this.baseConfig.localhost+'/conversationChild/selectConversationChildByConversationId',//当前贴吧的帖子(楼层)数据
+          publishUrl : this.baseConfig.localhost+'/conversationChild/addConversationChild',//发布帖子的方法
+          statisticsUrl : this.baseConfig.localhost+'/conversation/selectConversationStatistics',//获取用户发贴和关注量等数据
           datas : '',//贴吧名称当前贴子标题等数据
+          backgroundUrl : this.baseConfig.localhost+this.baseConfig.imgUrl+'?imgId=',
           floor : {//帖子楼层数据
               datas : '',
               start : 1,//开始页,不能为0或负数
@@ -74,7 +83,7 @@ export default {
       this.id = params.conversationId;
       this.init();//初始化页面数据
     },
-    components : {replyPanel,login,page,wangEditor,childHeader},//引入组件
+    components : {replyPanel,login,page,wangEditor,childHeader,centerRight},//引入组件
     watch:{
             'floor.total'(val){//总数被修改时触发
                 this.$refs.page.total = this.floor.total;//修改分页组件的总数
@@ -146,6 +155,10 @@ export default {
                     if(result.success){
                         this.datas = result.result;
                         this.loading = false;//关闭遮罩
+                        //暂时先将当前贴吧数据写入localStorage
+                        localStorage.setItem('currentConversation',JSON.stringify(this.datas));
+                        this.loadingBackground();//加载背景图片
+                        this.getStatistics();//加载关注发贴量等数据
                     }else{
                        //查询不到贴吧数据，跳转至错误页面
                        this.$router.push({
@@ -177,10 +190,10 @@ export default {
                     this.$nextTick(function(){
                         this.appendContent();
                     })
-                  //  setTimeout(()=>{
-                  //    this.appendContent();
-                  //  })
-
+                    //获取贴吧数据后进行吧主判断,判断是否为吧主，是否显示吧务按钮,由于数据datas的传值速度慢于子组件的加载速度，故延迟加载子组件的获取
+                    setTimeout(()=>{
+                      this.$refs.centerRight.isMaster();
+                    },100)
                 }else{
                   throw "加载失败";
                 }
@@ -243,6 +256,39 @@ export default {
         },
         updateFloor(val){
 
+        },
+        getStatistics(){//获取当前贴吧发帖量，用户关注量等数据
+            $.ajax({
+                url : this.statisticsUrl,
+                data : {
+                    id : this.datas.id,
+                    token : this.getToken()
+                },
+                success : (result)=>{
+                    if(result.success){
+                        console.log('-------------')
+                        console.log(result)
+                        //数据追加到datas里
+                      this.datas.followUserNumber = result.result.followUserNumber;
+                      this.datas.publishNumber = result.result.publishNumber;
+                    }else{
+                        this.$alert(result.message,'提示')
+                    }
+                },
+                error :()=>{
+                  throw "查询错误"
+                }
+            });
+        },
+        loadingBackground(){//加载背景图片
+            console.log('dacheng......')
+            console.log(this.datas)
+            if(this.datas.background == '' || this.datas.background == null)
+              return;
+            console.log('?????????'+this.backgroundUrl+this.datas.background)
+            $('#main').css('background-image','url('+this.backgroundUrl+this.datas.background+')')
+            //如果图片id不为空进行加载
+            //$('main').style.background-img
         }
     }
 }
@@ -250,14 +296,15 @@ export default {
 </script>
 <style>
 .conversation-core{
-  padding:0px;width:75%;
+  background-color: white;
+  padding:0px;width:90%;
   margin:0 auto;
   margin-top : 10px;
   border : 1px solid #DCDCDC;
 }
 .conversation-header{
     border-bottom: 1px solid #DCDCDC;
-    height:300px;
+    height:330px;
     position:relative;
 }
 .conversation-header-top{
@@ -271,6 +318,7 @@ export default {
 .conversation-title{
     padding : 10px;
     border-bottom: 1px solid #DCDCDC;
+    background-color:white;
 }
 .conversation-floor{
     border-bottom : 1px solid #DCDCDC;
@@ -353,5 +401,12 @@ border: 1px solid #DCDCDC;
   padding-right: 50px;
   padding-top: 50px;
   margin-bottom: -20px;
+}
+.conversation-child-center-left{
+  width:75%;border-right: 1px solid #E9E9EB
+}
+.conversation-child-center-right{
+  border-bottom: 1px solid #E9E9EB;
+  width: 25%;
 }
 </style>
