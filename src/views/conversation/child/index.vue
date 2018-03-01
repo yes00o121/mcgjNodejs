@@ -23,14 +23,14 @@
                   <div  class="conversation-last-user" style="padding-right:3%;">{{handlerDate(data.lastDate)}}</div>
                   <div class="conversation-div-content">
                     <div class="conversation-size">
-                        <router-link :to="{path:'/conversationChildChild',query : {id:data.id}}">
+                        <router-link :to="{path:'/conversationChildChild',query : {id:data.id}}" style="color:#2d64b3;text-decoration: dotted;">
                             {{data.title}}
                         </router-link>
                     </div>
-                    <div v-bind:id="'post_content_'+data.id" class="conversation-child-content">
+                    <div v-bind:id="'post_content_'+data.id" class="conversation-child-content" >
                         <!-- 数据含标签动态追加 -->
                     </div>
-                    <div v-bind:id="'post_img_'+data.id"></div>
+                    <div v-bind:id="'post_img_'+data.id" style="display: flex;"></div>
                   </div>
               </div>
             </div>
@@ -111,8 +111,8 @@ export default {
                         continue;
                     }
                     //if(elements[j].src)
-                    elements[j].style.width="160px"
-                    elements[j].style.height="90px"
+                    //elements[j].style.width="160px"
+                    elements[j].style.height="100px"
                     if(j>1)
                     elements[j].style.marginLeft="20px"
                     document.getElementById('post_img_'+datas[i].id).append(elements[j]);
@@ -127,9 +127,9 @@ export default {
                         if(img[k].src.search('http://img.t.sinajs.cn') != -1 || imgNum == 3){
                           continue;
                         }
-                        img[k].style.width="160px"
-                        img[k].style.height="90px"
-                        img[k].style.marginLeft = "20px"
+                        //img[k].style.width="160px"
+                        img[k].style.height="100px"
+                        img[k].style.marginRight = "10px"
                         document.getElementById('post_img_'+datas[i].id).append(img[k]);
                         ++imgNum;
                     }
@@ -266,8 +266,6 @@ export default {
                 },
                 success : (result)=>{
                     if(result.success){
-                        console.log('-------------')
-                        console.log(result)
                         //数据追加到datas里
                       this.datas.followUserNumber = result.result.followUserNumber;
                       this.datas.publishNumber = result.result.publishNumber;
@@ -281,11 +279,8 @@ export default {
             });
         },
         loadingBackground(){//加载背景图片
-            console.log('dacheng......')
-            console.log(this.datas)
             if(this.datas.background == '' || this.datas.background == null)
               return;
-            console.log('?????????'+this.backgroundUrl+this.datas.background)
             $('#main').css('background-image','url('+this.backgroundUrl+this.datas.background+')')
             //如果图片id不为空进行加载
             //$('main').style.background-img
@@ -297,7 +292,8 @@ export default {
 <style>
 .conversation-core{
   background-color: white;
-  padding:0px;width:90%;
+  padding:0px;
+  width:90%;
   margin:0 auto;
   margin-top : 10px;
   border : 1px solid #DCDCDC;

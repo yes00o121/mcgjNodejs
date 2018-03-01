@@ -17,10 +17,13 @@ export default{
   },
   mounted(){
     this.init();
+
+    console.log($('.master-center-core')[0])
     $('.master-center-core')[0].style.height=window.outerHeight-300+"px"//初始化中心高度
   },
   updated(){
-      $('.master-center-core')[0].style.height=window.outerHeight-300+"px"//初始化中心高度
+      if($('.master-center-core')[0] != null)
+        $('.master-center-core')[0].style.height=window.outerHeight-300+"px"//初始化中心高度
   },
   methods: {
       init(){

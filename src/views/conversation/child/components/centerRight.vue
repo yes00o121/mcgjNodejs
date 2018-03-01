@@ -47,7 +47,6 @@ export default{
     },
     props:["datas"],
     mounted(){
-      //this.$emit("centerRight",this.init)
       this.init();//初始化方法
     },
     methods : {
@@ -57,20 +56,18 @@ export default{
           //获取当前div相对于滚动条的位置，实时监听滚动条，如果滚动条一旦超过指定位置，整个div标签进行绝对定位
           window.onscroll = ()=>{
               if(window.scrollY >centerRightHeight){
-                  console.log('超过了。。。。。。。。')
-                  this.setposition();
+                  this.setposition(centerRight);
               }else{
-                  console.log('没有超过。。。。。。。。')
-                  this.resetPosition();
+                  this.resetPosition(centerRight);
               }
           }
           //this.isMaster();
         },
-        setposition(){//设置面板位置
+        setposition(centerRight){//设置面板位置
             centerRight.style.position = 'fixed';
             centerRight.style.top = 0;
         },
-        resetPosition(){//还原面板位置
+        resetPosition(centerRight){//还原面板位置
           centerRight.style.position = '';
         //centerRight.style.top = 0;
         },

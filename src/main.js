@@ -8,6 +8,7 @@ Vue.use(Element)
 Vue.use(router);
 Vue.prototype.baseConfig = baseConfig;//设置全局配置文件
 router.beforeEach((to,form,next)=>{//路由拦截
+  console.log(to)
   //跳转页面前清空背景图片
   $('#main').css('background-image','')
   if(to.name == null){//如果页面不存在跳转至错误页面
@@ -16,6 +17,10 @@ router.beforeEach((to,form,next)=>{//路由拦截
     })
   }
   next();
+})
+router.afterEach(()=>{//页面跳转之后触发
+      //页面跳转之后刷新页面，重新加载
+
 })
 /******************************************* 全局方法 ***************************************************************/
 Vue.prototype.isLogin=function(){//全局方法，判断用户是否登录

@@ -214,12 +214,6 @@ export default {
 }
 </script>
 <style>
-.conversation-core{
-  padding:0px;width:75%;
-  margin:0 auto;
-  margin-top : 10px;
-  border : 1px solid #DCDCDC;
-}
 .conversation-name{
     padding : 10px;
     border-bottom: 1px solid #DCDCDC;

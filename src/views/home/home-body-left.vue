@@ -1,6 +1,6 @@
 <!-- 左侧放置分类数据 -->
 <template>
-  <div class= "body-left-width">111</div>
+  <div class= "body-left-width"></div>
 </template>
 <script>
 export default {
@@ -13,7 +13,7 @@ export default {
 .body-left-width {
   height : 70%;
   width : 15%;
-  border : 1px solid #DCDCDC;
+  /*border : 1px solid #DCDCDC;*/
   margin-top : 10px;
   display:inline;
   float : left;

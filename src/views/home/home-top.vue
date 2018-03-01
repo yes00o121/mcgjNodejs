@@ -205,6 +205,7 @@ export default {
           this.$router.push({
             path : '/'
           })
+          location.reload();//重新加载页面
         },
         replyEvent(event){//回复事件
             if(event == 1){

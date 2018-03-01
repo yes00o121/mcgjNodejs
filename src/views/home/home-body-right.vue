@@ -1,6 +1,7 @@
 <!-- 右侧放置排行数据 -->
 <template>
   <div class= "body-right-width">
+    <!--
       <div >
           <ul>
             <li class="body-right-record-margin">
@@ -10,11 +11,12 @@
             </li>
             <li class="body-right-record-margin">
               <el-tag size="mini">2</el-tag>
-              <span>哈哈哈哈</span>
+              <span></span>
               <span style="float:right">547844</span>
             </li>
           </ul>
       </div>
+      -->
   </div>
 </template>
 <script>
@@ -28,7 +30,7 @@ export default {
 .body-right-width {
   height : 70%;
   width : 15%;
-  border : 1px solid #DCDCDC;
+  /*border : 1px solid #DCDCDC;*/
   margin-top : 10px;
   display:inline;
   float : right;

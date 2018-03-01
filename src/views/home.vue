@@ -28,7 +28,7 @@ export default {
   },
   components : {topHome,menuHome,bottomHome,bodyHome,utilHome},
   mounted(){
-      
+
   }
 }
 </script>
@@ -89,5 +89,5 @@ a {
 .box {
 display: inline-block;
 }
-
+a:hover{text-decoration:underline;color: #red;}
 </style>
