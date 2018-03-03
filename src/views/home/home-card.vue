@@ -2,7 +2,7 @@
 <template>
   <el-carousel :interval="4000" type="card" height="200px">
     <el-carousel-item v-for="item in limit" :key="item">
-        <router-link v-if="datas[item-1]!=null" :to="{path:'/conversationChild',query : {conversationId:datas[item-1].id}}">
+        <router-link v-if="datas[item-1]!=null" :to="{path:'/conversationChild',query : {conversationId:datas[item-1].id,start:1}}">
           <img v-if="datas[item-1]!=null" v-bind:src= "imgUrl+datas[item-1].cardBanner" style="height:100%;width:100%">
         </router-link>
     </el-carousel-item>

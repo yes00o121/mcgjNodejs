@@ -8,7 +8,7 @@
               <!-- 楼层 -->
               <div v-for="(data,index) in floor.datas" class="conversation-floor" >
                 <ul style="display:grid">
-                  <li style="padding-bottom:24px;">
+                  <li>
                       <div style="float: left;margin-left:20px;">
                           <el-button size="mini" style="height:25px">{{data.replyNumber}}</el-button>
                       </div>
@@ -29,7 +29,7 @@
                                 <span style="padding-left: 30px;">{{handlerDate(data.lastDate)}}</span>
                             </div>
                         </div>
-                        <ul style="margin: 10px 0 6px;height:100px;display: flex;" v-bind:id = "'post_content_image_'+data.id">
+                        <ul style="margin: 10px 0 6px;height:100px;" v-bind:id = "'post_content_image_'+data.id">
                             <!-- 内容为追加显示 -->
                         </ul>
                         <div style="padding-top: 2px;font-size:12px;color:#999">
@@ -46,7 +46,7 @@
               <centerRight :datas= "datas" ref="centerRight"></centerRight>
             </div>
           </div>
-          <page ref="page" @getPage= "getPage"></page>
+          <page ref="page" :currentPage = "parseInt(floor.start)"  @getPage= "getPage"></page>
           <div class="conversation-child--content-title">
               <div style="font-size:14px;padding-bottom:20px">发表新贴</div>
               <el-input placeholder="请输入标题" v-model="title"></el-input>
@@ -75,25 +75,22 @@ export default {
           imgUrl : this.baseConfig + this.baseConfig.imgUrl+'/imgId=',//图片地址
           floor : {//帖子楼层数据
               datas : '',
-              start : 1,//开始页,不能为0或负数
+              start : this.$route.query.start,//开始页,不能为0或负数
               limit : 5,//结束页
               total : '',
               imgs : []//贴子的图片，帖子可以有多张图片
           },
           title : '',//发贴的标题
           loading : true,//遮罩层
-          id : ''//当前贴吧的id
+          id : this.$route.query.conversationId//当前贴吧的id
       }
     },
     mounted(){//加载页面数据
-      //显示发表组件
-      var params = this.$route.query;//获取参数
-      //设置当前帖子id
-      this.id = params.conversationId;
       this.init();//初始化页面数据
-      window.onload = (()=>{
-          this.append();
-      })
+      this.append();
+      //window.onload = (()=>{
+
+      //})
     },
     components : {replyPanel,login,page,wangEditor,childHeader,centerRight},//引入组件
     watch:{
@@ -130,13 +127,13 @@ export default {
             return result.join().replace(/,/g,'');
         }
         return '';
-
     },
     appendImage(data){//追加图片,参数为需要解析的标签字符串和贴吧对象
         var html = data.content;//获取内容标签
         if(html != null){
           var html2 = html;
           var index = 0;//记录添加的图片数量
+          $('#post_content_image_'+data.id+' li').remove();
           for(let i = 0;i<3;i++){
             var first = html2.indexOf('src="');
             if(first == -1){//表示用户发表的贴子内容没有附带图片，直接退出
@@ -215,6 +212,7 @@ export default {
           }
         },
         init(){
+          //this.$refs.page.currentPage = this.floor.start;//当前页
           this.$refs.page.size = this.floor.limit;//设置分页组件的页数
           this.getData();
           this.getfloorDatas();//获取楼层数据
@@ -327,8 +325,7 @@ export default {
             })
         },
         getPage(val){//获取子组件当前页数据
-          this.floor.start = val;//更新页数
-          this.getfloorDatas();
+          location.href = '/conversationChild?conversationId='+this.id+''+'&start='+val//跳转到对应页数
         },
         updateFloor(val){
 
@@ -395,7 +392,6 @@ export default {
 .conversation-floor{
     border-bottom : 1px solid #DCDCDC;
     position:relative;
-    height : 200px;
 }
 .conversation-div-photo{
   width : 15%;

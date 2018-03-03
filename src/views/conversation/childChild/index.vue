@@ -1,9 +1,9 @@
 //贴吧子贴(会话)主页面
 <template>
-  <div>
-      <div class="conversation-core">
+  <div class="conversation-child-child-core">
+      <div >
       <div class="conversation-name">
-        <router-link :to="{path : '/conversationChild',query : {conversationId : datas.conversationId}}">
+        <router-link :to="{path : '/conversationChild',query : {conversationId : datas.conversationId,start:1}}">
           {{datas.conversationName}}吧
         </router-link>
       </div>
@@ -19,9 +19,7 @@
               </div>
               <div class="conversation-child-child-div-content" style="">
                 <div v-bind:id="'post_content_'+data.id" class="conversation-child-child-size">
-
                     <!--  内容为标签使用jquery动态追加 -->
-
                 </div>
               </div>
               <div class="conversation-child-child-floor-time">
@@ -68,8 +66,12 @@ export default {
       //设置当前帖子id
       this.id = params.id;
       this.init();//初始化页面数据
+      window.onload = ()=>{
+          this.append();
+      }
     },
     updated(){//DOM渲染
+      /*
         setTimeout(()=>{
           var datas = this.floor.datas;
           for(let i = 0;i<datas.length;i++){
@@ -84,6 +86,7 @@ export default {
               }
           }
         },200)
+        */
     },
     components : {replyPanel,login,page,wangEditor,childChildTitle},//引入组件
     watch:{
@@ -95,6 +98,25 @@ export default {
             }
     },
     methods : {
+        append(){//追加面板数据
+          var datas = this.floor.datas;
+            for(let i = 0;i<datas.length;i++){
+            $('#post_content_'+datas[i].id).append(datas[i].content);//追加楼层内容
+            //判断楼层图片是否超出当前的宽度，如果超出将其宽度设置为100%
+            var imgs = $('#post_content_'+datas[i].id + ' img');
+            var width = $('#post_content_'+datas[i].id).width()//当前区域宽度
+                imgs.each(function(a,value){
+                  value.onload = function(){
+                    var labelWidth = value.width//标签宽度
+                    if(labelWidth > width){
+                        value.style.width="100%"
+                    }
+                  }
+
+                })
+          }
+
+        },
         init(){
           this.$refs.page.size = this.floor.limit;//设置分页组件的页数
           this.getData();//获取标题等数据
@@ -133,10 +155,9 @@ export default {
         var conversationChildId = this.id;
         var start = this.floor.start;//开始页
         var limit = this.floor.limit;//页数
-        console.log('???????????????执行？？？？')
         $.ajax({
             url : this.floorUrl,
-            //async : false,
+            async : false,//同步加载
             data : {
                 conversationChildId,
                 start,
@@ -269,5 +290,11 @@ export default {
   text-align: right;
   font-size:12px;
   position: absolute;
+}
+.conversation-child-child-core{
+  border: 1px solid #ccc;
+  width:980px;
+  margin: 0px auto;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,.12), 0 0 6px 0 rgba(0,0,0,.04);
 }
 </style>

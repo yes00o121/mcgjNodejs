@@ -4,7 +4,7 @@
       <div v-if="isFollowConversation" >
           <div >
               <span v-for="data,index in datas" >
-                <router-link :to="{path:'/conversationChild',query : {conversationId:data.conversationId}}" target="_blank">
+                <router-link :to="{path:'/conversationChild',query : {conversationId:data.conversationId,start:1}}" target="_blank">
                     <el-button  icon="el-icon-star-on" size="mini" type="primary" class="home-followButton" >
                       {{data.conversationName}}
                     </el-button>

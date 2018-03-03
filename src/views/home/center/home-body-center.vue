@@ -9,13 +9,13 @@
                   <div>
                     <div>
                       <div style="margin-bottom:5px;">
-                        <router-link style="text-decoration:none;"  target="_blank" title="data.conversationName" :to="{path:'/conversationChild',query : {conversationId:data.id}}">
+                        <router-link style="text-decoration:none;"  target="_blank" title="data.conversationName" :to="{path:'/conversationChild',query : {conversationId:data.childId,start:1}}">
                             {{data.conversationName}}吧
                         </router-link>
                       </div>
                     </div>
                     <div style="margin-bottom:5px;">
-                      <router-link style="text-decoration:none;color:#2d64b3"  target="_blank" title="data.title" :to="{path:'/conversationChildChild',query : {id:data.childId}}">
+                      <router-link style="text-decoration:none;color:#2d64b3"  target="_blank" title="data.title" :to="{path:'/conversationChildChild',query : {id:data.id,start:1}}">
                           {{data.title}}
                       </router-link>
                       <span style="margin-left:10px;font-size:12px;">
@@ -52,10 +52,10 @@ export default {
     };
   },
   mounted : function(){
-    window.onload = ()=>{//所有的数据加载完后执行
+    //window.onload = ()=>{//所有的数据加载完后执行
       this.findNewestConversation();//初始化时获取最新帖子动态数据源
       this.append();
-    }
+    //}
   },
   updated(){
 

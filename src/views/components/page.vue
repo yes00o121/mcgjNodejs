@@ -7,7 +7,7 @@
             background
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :current-page.sync="currentPage"
+            :current-page.sync="currentPage2"
             :page-size="size"
             layout="prev, pager, next, jumper"
             :total="total">
@@ -20,11 +20,12 @@
 export default {
     data(){
       return {
-        currentPage : 1,//当前页数
+        currentPage2 : this.currentPage,//当前页数
         total : 0,//数据总条数
         size : 20//一页显示的条数
       }
     },
+    props : ['currentPage'],//接收的父组件当前页数
     mounted:function(){//记录当前用户最后显示的页数
 
     },

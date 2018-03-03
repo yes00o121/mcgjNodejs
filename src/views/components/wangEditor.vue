@@ -23,7 +23,6 @@ export default {
       this.config();
       window.a = this.editor;
       this.editor.customConfig.uploadImgShowBase64 = true;//显示本地上传图片功能
-      console.log(this.editor)
       this.editor.create();//创建富文本框
       this.zIndex();
       this.hideMenu();
@@ -31,7 +30,6 @@ export default {
   methods : {
       hideMenu(){//隐藏菜单
           var menu = this.editor.$toolbarElem[0].children;
-          console.log(menu)
           menu[0].style.display="none"
           menu[1].style.display="none"
           menu[2].style.display="none"
@@ -84,11 +82,11 @@ export default {
           this.listeners();
       },
       publish(){//发表楼层的方法
-          if(this.editor.txt.text() == '' || this.editor.txt.html()=='<p><br></p>'){
+          if(this.editor.txt.text().replace(/&nbsp;/gi,'').trim() == '' && this.editor.txt.html().indexOf('src') == -1){
               this.$alert('请输入','提示');
               return;
           }
-          this.$emit('onPublish',this.editor.txt.html())
+          this.$emit('onPublish',this.editor.txt.html())//将数据传输到父组件中进行处理
       },
       listeners(){//监听方法
         this.editor.customConfig.uploadImgHooks = {//监听图片的上传

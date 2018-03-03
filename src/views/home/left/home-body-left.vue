@@ -9,7 +9,7 @@
           </div>
           <div style="display: flex;">
             <div style="width: 190px;height: 49px;overflow: hidden;">
-                <router-link v-for="d in data" class="home-body-conversationName"  target="_blank" title="d.conversationName" :to="{path:'/conversationChild',query : {conversationId:d.id}}">
+                <router-link v-for="d in data" class="home-body-conversationName"  target="_blank" title="d.conversationName" :to="{path:'/conversationChild',query : {conversationId:d.id,start:1}}">
                   {{d.conversationName}}
                 </router-link>
             </div>
