@@ -1,37 +1,45 @@
 //贴吧主页面
 <template>
-  <div>
+  <div v-loading="loading">
       <div class="conversation-core">
           <childHeader ref="childHeader" :datas.sync = "datas"></childHeader>
           <div style="display: -webkit-box;">
             <div class="conversation-child-center-left">
               <!-- 楼层 -->
-              <div v-for="(data,index) in floor.datas" class="conversation-floor" v-loading="loading">
-                  <div class="conversation-div-photo">
-                      <div v-if="data.isManage" class="louzhubiaoshi"></div>
-                      <div style="padding-top:20px;">
-                        <el-tooltip content="回复" placement="top">
-                          <el-button size="mini">{{data.replyNumber}}</el-button>
-                        </el-tooltip>
-                        <p style="margin-top:10px;">{{data.userName}}</p>
+              <div v-for="(data,index) in floor.datas" class="conversation-floor" >
+                <ul style="display:grid">
+                  <li style="padding-bottom:24px;">
+                      <div style="float: left;margin-left:20px;">
+                          <el-button size="mini" style="height:25px">{{data.replyNumber}}</el-button>
                       </div>
-                  </div>
-                  <div class="conversation-create-user">{{data.createUserName}}</div>
-                  <div  class="conversation-last-user">
-                      <div>{{data.lastUserName}}</div>
-                  </div>
-                  <div  class="conversation-last-user" style="padding-right:3%;">{{handlerDate(data.lastDate)}}</div>
-                  <div class="conversation-div-content">
-                    <div class="conversation-size">
-                        <router-link :to="{path:'/conversationChildChild',query : {id:data.id}}" style="color:#2d64b3;text-decoration: dotted;">
-                            {{data.title}}
-                        </router-link>
-                    </div>
-                    <div v-bind:id="'post_content_'+data.id" class="conversation-child-content" >
-                        <!-- 数据含标签动态追加 -->
-                    </div>
-                    <div v-bind:id="'post_img_'+data.id" style="display: flex;"></div>
-                  </div>
+                      <div style="padding-left: 80px;">
+                        <div style="margin-bottom:5px;display: flex;">
+                          <div style="width: 520px;">
+                          <router-link  style="text-decoration:none;color:#2d64b3;font-size:14px;"  target="_blank" :to="{path:'/conversationChildChild',query : {id:data.id}}">
+                              {{data.title}}
+                          </router-link>
+                          </div>
+                          <div style="font-size:12px;color:#999">{{data.createUserName}}</div>
+                        </div>
+                        <div  style="display: flex;">
+                            <!-- 内容为追加显示 -->
+                            <div v-bind:id = "'post_content_home_'+data.id" style="width:520px;font-size:14px;color:#666;line-height:24px;font-size:12px;"></div>
+                            <div style="font-size:12px;color:#999">
+                                <span>{{data.lastUserName}}</span>
+                                <span style="padding-left: 30px;">{{handlerDate(data.lastDate)}}</span>
+                            </div>
+                        </div>
+                        <ul style="margin: 10px 0 6px;height:100px;display: flex;" v-bind:id = "'post_content_image_'+data.id">
+                            <!-- 内容为追加显示 -->
+                        </ul>
+                        <div style="padding-top: 2px;font-size:12px;color:#999">
+                            <img v-bind:src="imgUrl+data.photo" style="height: 15px;border-radius: 50%;">
+                            <a href="#" style="color:#999;margin-left:5px;">{{data.userName}}</a>
+                            <span style="padding-left:21px;">{{handlerDate(data.lastTime)}}</span>
+                        </div>
+                      </div>
+                  </li>
+                </ul>
               </div>
             </div>
             <div class="conversation-child-center-right">
@@ -64,6 +72,7 @@ export default {
           statisticsUrl : this.baseConfig.localhost+'/conversation/selectConversationStatistics',//获取用户发贴和关注量等数据
           datas : '',//贴吧名称当前贴子标题等数据
           backgroundUrl : this.baseConfig.localhost+this.baseConfig.imgUrl+'?imgId=',
+          imgUrl : this.baseConfig + this.baseConfig.imgUrl+'/imgId=',//图片地址
           floor : {//帖子楼层数据
               datas : '',
               start : 1,//开始页,不能为0或负数
@@ -82,6 +91,9 @@ export default {
       //设置当前帖子id
       this.id = params.conversationId;
       this.init();//初始化页面数据
+      window.onload = (()=>{
+          this.append();
+      })
     },
     components : {replyPanel,login,page,wangEditor,childHeader,centerRight},//引入组件
     watch:{
@@ -96,6 +108,70 @@ export default {
 
     },
     methods : {
+    append(){//追加数据
+        this.appendText();
+    },
+    appendText(){//追加贴子文字内容
+      setTimeout(()=>{//暂时写成延迟加载
+        for(let i=0;i<this.floor.datas.length;i++){
+            var text = this.getChinalCharacters(this.floor.datas[i].content);//获取提取后的汉字
+            if( text != null && text.length>40){//如果大于指定字数,删除后续汉字
+                text = text.substring(0,40)+".....";
+            }
+            document.getElementById('post_content_home_'+this.floor.datas[i].id).innerHTML=text;
+            this.appendImage(this.floor.datas[i]);
+        }
+      },200)
+    },
+    getChinalCharacters(html){//提取出标签内的文字
+        var reg=/[\u4E00-\u9FA5]/g;
+        var result=html.match(reg,'');
+        if(result != null){
+            return result.join().replace(/,/g,'');
+        }
+        return '';
+
+    },
+    appendImage(data){//追加图片,参数为需要解析的标签字符串和贴吧对象
+        var html = data.content;//获取内容标签
+        if(html != null){
+          var html2 = html;
+          var index = 0;//记录添加的图片数量
+          for(let i = 0;i<3;i++){
+            var first = html2.indexOf('src="');
+            if(first == -1){//表示用户发表的贴子内容没有附带图片，直接退出
+                break;
+            }
+            first+=5;//获取第一张图片开始位置,加上字符串的长度
+            var text = html2.substring(first,html2.length);//地址开始位置截取到末尾
+            var last = text.indexOf('">');
+            var address = text.substring(0,last);//截取到图片地址末尾
+            //如果该地址是正常的图片地址追加显示
+            if(address.indexOf('img.t')==-1 && address != ""){
+                  $('#post_content_image_'+data.id).append(`
+                      <li style="height: 100%;margin-left: 0px;">
+                        <img style="height:100%" src= "${address}">
+                      </li>
+                  `);
+                  index++;//添加了图片，记录索引
+            }
+            //获取实际的最后一个">位置
+            var actualLast = html2.indexOf('">')+2;
+            //如果actualLast小于first表示没有取到图片之后的位置,继续获取
+              if(actualLast<first){
+                  actualLast = last+first;
+              }
+            //获取截取图片之后的字符串
+            html2 = html2.substring(actualLast,html.length);
+
+          }
+          //如果循环结束了index还是为0，表示用户没有发表图片，删除图片div
+          if(index == 0){
+              $('#post_content_image_'+data.id).remove();
+          }
+        }
+
+    },
         appendContent(){
           var datas = this.floor.datas;
           for(let i = 0;i<datas.length;i++){
@@ -187,9 +263,9 @@ export default {
                 if(result.success){
                     this.floor.datas = result.result.conversationChilds;
                     this.floor.total = result.result.size;
-                    this.$nextTick(function(){
-                        this.appendContent();
-                    })
+                    //this.$nextTick(function(){
+                    //    this.appendContent();
+                    //})
                     //获取贴吧数据后进行吧主判断,判断是否为吧主，是否显示吧务按钮,由于数据datas的传值速度慢于子组件的加载速度，故延迟加载子组件的获取
                     setTimeout(()=>{
                       this.$refs.centerRight.isMaster();

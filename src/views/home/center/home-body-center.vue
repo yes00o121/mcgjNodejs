@@ -16,7 +16,7 @@
                     </div>
                     <div style="margin-bottom:5px;">
                       <router-link style="text-decoration:none;color:#2d64b3"  target="_blank" title="data.title" :to="{path:'/conversationChildChild',query : {id:data.childId}}">
-                          {{data.title}}吧
+                          {{data.title}}
                       </router-link>
                       <span style="margin-left:10px;font-size:12px;">
                         <el-button size="mini" style="height:25px">{{data.replyNumber}}</el-button>
@@ -25,7 +25,7 @@
                     <div v-bind:id = "'post_content_home_'+data.id" style="font-size:14px;color:#666;line-height:24px">
                         <!-- 内容为追加显示 -->
                     </div>
-                    <ul style="margin: 10px 0 6px;height:100px;" v-bind:id = "'post_content_image_'+data.id">
+                    <ul style="margin: 10px 0 6px;height:100px;display: flex;" v-bind:id = "'post_content_image_'+data.id">
                         <!-- 内容为追加显示 -->
                     </ul>
                     <div style="padding-top: 2px;font-size:12px;color:#999">
@@ -89,6 +89,7 @@ export default {
               first+=5;//获取第一张图片开始位置,加上字符串的长度
               var text = html2.substring(first,html2.length);//地址开始位置截取到末尾
               var last = text.indexOf('">');
+
               var address = text.substring(0,last);//截取到图片地址末尾
               //如果该地址是正常的图片地址追加显示
               if(address.indexOf('img.t')==-1 && address != ""){
@@ -101,9 +102,12 @@ export default {
               }
               //获取实际的最后一个">位置
               var actualLast = html2.indexOf('">')+2;
+              //如果actualLast小于first表示没有取到图片之后的位置,继续获取
+                if(actualLast<first){
+                    actualLast = last+first;
+                }
               //获取截取图片之后的字符串
               html2 = html2.substring(actualLast,html.length);
-
             }
             //如果循环结束了index还是为0，表示用户没有发表图片，删除图片div
             if(index == 0){
@@ -139,7 +143,6 @@ export default {
               success(result){
                 if(result.success){
                     _this.datas = result.result;
-                    console.log(_this.datas)
                 }else{
                   throw "获取动态数据失败";
                 }

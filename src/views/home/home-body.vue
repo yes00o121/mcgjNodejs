@@ -12,8 +12,8 @@
     </div>
 </template>
 <script>
-import homeBodyLeft from './home-body-left'//左侧组件
-import homeBodyRight from './home-body-right'//右侧组件
+import homeBodyLeft from './left/home-body-left'//左侧组件
+import homeBodyRight from './right/home-body-right'//右侧组件
 import homeBodyCenter from './center/home-body-center'//中心组件
 import card from './home-card'//卡片组件
 export default {
