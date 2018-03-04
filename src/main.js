@@ -1,4 +1,4 @@
-import Vue from 'vue'
+﻿import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import Element from 'element-ui'
@@ -13,7 +13,7 @@ router.beforeEach((to,form,next)=>{//路由拦截
   if(to.name == null){//如果页面不存在跳转至错误页面
     router.push({
         name : 'error'
-    })
+    }) 
   }
   next();
 })
